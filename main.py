@@ -61,7 +61,7 @@ def info():
     upload_to_cloud('/tmp/S{}.csv'.format(session['sub_id']), 'S{}.csv'.format(session['sub_id']))
     
     tests = os.listdir('static/AB_test/')
-    return render_template('rohit.html', audpath='static/AB_test/', tests=tests)
+    return render_template('test.html', audpath='static/AB_test/', tests=tests)
 
 
 @app.route('/end', methods=['GET', 'POST'])
