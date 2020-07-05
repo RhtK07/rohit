@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+     <!-- <link rel="stylesheet" href="index.css">  -->
+    <title>Train</title>
+
+    
+</head>
+<body >
+    <br><br><br>
+    <div id='test' align="middle">
+        <h1 id='header'> </h1>
+
+        <form>
+            <div style='padding:10px'>
+            <input type="radio" id='r1' name="aud" onclick="radioclicked()" style='border: 0px;width: 2em;height: 2em;'>
+            <audio controls id='aud1' onplay="aud=document.getElementById('aud2');aud.pause();aud.currentTime=0;"> </audio>
+            </div>
+            <div style='padding:10px'>
+            <input type="radio" id='r2' name="aud" onclick="radioclicked()" style='border: 0px;width: 2em;height: 2em;'>
+            <audio controls id='aud2' onplay="aud=document.getElementById('aud1');aud.pause();aud.currentTime=0;"> </audio>
+            </div>
+        </form>
+        <br><br><br>
+        <button id='next' onclick="next()" disabled style='height:50px;width:50px;'> Next</button>
+    </div>
+    <div align="middle">
+
+        <form id='end' method="post" action='/end' hidden>
+        <h1> Please press submit </h1>
+            <input type='text' id='results' name="results" hidden>
+            <input type='submit' value='SUBMIT'>
+        </form>
+        
+    </div>
+      
+    <script>
+        
+        function shuffleArray(array) {
+            for(var i = array.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+        }
+
+        var audpath = '{{ audpath }}';
+        var tests = {{ tests|tojson }};
+        var ab = ['a','b']
+        shuffleArray(tests)
+        var num = 0
+        var num_tests = 4;//tests.length
+        var results = ''
+
+        function set_audios(num){
+            shuffleArray(ab)
+            document.getElementById('aud1').src=audpath+tests[num]+'/'+ab[0]+'.wav';
+            document.getElementById('aud2').src=audpath+tests[num]+'/'+ab[1]+'.wav';
+        }
+        set_audios(num)
+        document.getElementById('header').innerHTML='Select the better audio of the two ('+(num+1).toString()+'/'+num_tests.toString()+')'
+        function radioclicked(){
+            document.getElementById('next').disabled=false
+        }
+
+        function next(){
+            r1 = document.getElementById('r1')
+            r2 = document.getElementById('r2')
+            if(r1.checked)
+                results+=tests[num]+','+ab[0]+'-'
+            else
+                results+=tests[num]+','+ab[1]+'-'
+            r1.checked = false
+            r2.checked = false
+            console.log(results)
+            num+=1
+            if(num<num_tests)
+                set_audios(num)
+            else{
+                set_audios(num-1)
+                console.log('yup')
+                document.getElementById('test').hidden=true
+                document.getElementById('end').hidden=false
+                document.getElementById('results').value=results
+            }
+            document.getElementById('next').disabled=true
+            document.getElementById('header').innerHTML='Select the better audio of the two ('+(num+1).toString()+'/'+num_tests.toString()+')'
+        }
+
+    </script>
+</body>
+</html>
